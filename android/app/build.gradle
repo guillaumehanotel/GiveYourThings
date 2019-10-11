@@ -130,13 +130,13 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.helloreactnative"
+        applicationId "ovh.dawndash.giveyourthings"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         manifestPlaceholders = [
-                appAuthRedirectScheme: "com.helloreactnative"
+                appAuthRedirectScheme: "ovh.dawndash.giveyourthings"
         ]
     }
     splits {

@@ -1,4 +1,4 @@
-package com.helloreactnative.generated;
+package ovh.dawndash.giveyourthings.generated;
 
 import java.util.Arrays;
 import java.util.List;

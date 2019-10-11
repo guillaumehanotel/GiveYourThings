@@ -1,6 +1,6 @@
-package com.helloreactnative;
+package ovh.dawndash.giveyourthings;
 
-import com.helloreactnative.generated.BasePackageList;
+import ovh.dawndash.giveyourthings.generated.BasePackageList;
 import android.app.Application;
 import android.content.Context;
 

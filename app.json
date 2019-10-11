@@ -1,6 +1,6 @@
 {
-  "name": "HelloReactNative",
-  "displayName": "HelloReactNative",
+  "name": "GiveYourThings",
+  "displayName": "GiveYourThings",
   "android": {
     "config": {
       "googleSignIn": {
