@@ -1,4 +1,11 @@
 {
   "name": "HelloReactNative",
-  "displayName": "HelloReactNative"
+  "displayName": "HelloReactNative",
+  "android": {
+    "config": {
+      "googleSignIn": {
+        "certificateHash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+      }
+    }
+  }
 }

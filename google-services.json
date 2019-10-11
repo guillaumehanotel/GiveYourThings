@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "174543238911",
+    "firebase_url": "https://giveyourthings.firebaseio.com",
+    "project_id": "giveyourthings",
+    "storage_bucket": "giveyourthings.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:174543238911:android:719b7c3e4b1799e9463eca",
+        "android_client_info": {
+          "package_name": "ovh.dawndash.giveyourthings"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "174543238911-7rob7h0dk2qp3poobgv14t9kov88vgpu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ovh.dawndash.giveyourthings",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "174543238911-o0kf7s9g8r4987h9oc1jpijhrt32274b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4ZD3zbfTEfF7qMZ1mSfA8Dz67VuZZ5aU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "174543238911-o0kf7s9g8r4987h9oc1jpijhrt32274b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

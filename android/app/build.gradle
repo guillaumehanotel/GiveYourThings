@@ -119,6 +119,8 @@ def jscFlavor = 'org.webkit:android-jsc:+'
  */
 def enableHermes = project.ext.react.get("enableHermes", false);
 
+apply from: '../../node_modules/react-native-unimodules/gradle.groovy'
+
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
@@ -133,6 +135,9 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        manifestPlaceholders = [
+                appAuthRedirectScheme: "com.helloreactnative"
+        ]
     }
     splits {
         abi {
@@ -189,6 +194,8 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    addUnimodulesDependencies()
 }
 
 // Run this once to be able to run the application with BUCK
@@ -197,5 +204,6 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
+
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

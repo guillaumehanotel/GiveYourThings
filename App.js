@@ -1,114 +1,185 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
+//import {AppAuth} from 'expo-app-auth';
+import * as AppAuth from 'expo-app-auth';
+import * as Constants from 'expo-constants';
+import * as GoogleSignIn from 'expo-google-sign-in';
+// import {GoogleSignIn} from 'expo-google-sign-in';
 import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
+import {Image, StyleSheet, Text, View, Platform} from 'react-native';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import GoogleSignInButton from './GoogleSignInButton';
 
-const App: () => React$Node = () => {
-  return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
-  );
-};
+// const {OAuthRedirect, URLSchemes} = AppAuth;
+
+const OAuthRedirect = AppAuth.OAuthRedirect;
+const URLSchemes = AppAuth.URLSchemes;
+
+const isInClient = Constants.appOwnership === 'expo';
+if (isInClient) {
+  GoogleSignIn.allowInClient();
+}
+
+//const clientId = "174543238911-7rob7h0dk2qp3poobgv14t9kov88vgpu.apps.googleusercontent.com"
+const clientId = '174543238911-o0kf7s9g8r4987h9oc1jpijhrt32274b.apps.googleusercontent.com';
+
+export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      user: null,
+    };
+  }
+
+  async componentDidMount() {
+    try {
+      await GoogleSignIn.initAsync();
+      this._syncUserWithStateAsync();
+    } catch ({message}) {
+      alert('GoogleSignIn.initAsync(): ' + message);
+    }
+  }
+
+  /**
+   *
+   * @returns {Promise<void>}
+   * @private
+   */
+  _syncUserWithStateAsync = async () => {
+    const user = await GoogleSignIn.signInSilentlyAsync();
+    console.log('_syncUserWithStateAsync', {user});
+    this.setState({user});
+  };
+
+  signOutAsync = async () => {
+    try {
+      await GoogleSignIn.signOutAsync();
+      this.setState({user: null});
+    } catch ({message}) {
+      alert('signOutAsync: ' + message);
+    }
+  };
+
+  signInAsync = async () => {
+    try {
+      await GoogleSignIn.askForPlayServicesAsync();
+      const {type, user} = await GoogleSignIn.signInAsync();
+      if (type === 'success') {
+        this._syncUserWithStateAsync();
+      }
+    } catch ({message}) {
+      alert('login: Error:' + message);
+    }
+  };
+
+  /*  _syncUserWithStateAsync = async () => {
+      /!*
+        const user = await GoogleSignIn.signInSilentlyAsync();
+        this.setState({ user });
+      *!/
+      const data = await GoogleSignIn.signInSilentlyAsync();
+      console.log({data});
+      if (data) {
+        const photoURL = await GoogleSignIn.getPhotoAsync(256);
+        const user = await GoogleSignIn.getCurrentUserAsync();
+        this.setState({
+          user: {
+            ...user.toJSON(),
+            photoURL: photoURL || user.photoURL,
+          },
+        });
+      } else {
+        this.setState({user: null});
+      }
+    };*/
+
+  get buttonTitle() {
+    return this.state.user ? 'Sign-Out of Google' : 'Sign-In with Google';
+  }
+
+  render() {
+    const scheme = {
+      OAuthRedirect,
+      URLSchemes,
+    };
+    const {user} = this.state;
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        {user && <GoogleProfile {...user} />}
+        <GoogleSignInButton onPress={this._toggleAuth}>
+          {this.buttonTitle}
+        </GoogleSignInButton>
+        {/*<Text>AppAuth: {JSON.stringify(scheme, null, 2)}</Text>*/}
+      </View>
+    );
+  }
+
+  _toggleAuth = () => {
+    console.log('Toggle', !!this.state.user);
+    if (this.state.user) {
+      this._signOutAsync();
+    } else {
+      this._signInAsync();
+    }
+  };
+
+  _signOutAsync = async () => {
+    try {
+      // await GoogleSignIn.disconnectAsync();
+      await GoogleSignIn.signOutAsync();
+      console.log('Log out successful');
+    } catch ({message}) {
+      console.error('Demo: Error: logout: ' + message);
+    } finally {
+      this.setState({user: null});
+    }
+  };
+
+  _signInAsync = async () => {
+    try {
+      await GoogleSignIn.askForPlayServicesAsync();
+      // TODO ça plante ici
+      const {type, user} = await GoogleSignIn.signInAsync();
+
+      if (type === 'success') {
+        this._syncUserWithStateAsync();
+      }
+    } catch ({message}) {
+      console.error('login: Error:' + message);
+    }
+  };
+}
+
+class GoogleProfile extends React.PureComponent {
+  render() {
+    const {photoURL, displayName, email} = this.props;
+    return (
+      <View style={styles.container}>
+        {photoURL && (
+          <Image
+            source={{
+              uri: photoURL,
+            }}
+            style={styles.image}
+          />
+        )}
+        <View style={{marginLeft: 12}}>
+          <Text style={styles.text}>{displayName}</Text>
+          <Text style={styles.text}>{email}</Text>
+        </View>
+      </View>
+    );
+  }
+}
+
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
+  container: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 24,
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
+  image: {width: 128, borderRadius: 64, aspectRatio: 1},
+  text: {color: 'black', fontSize: 16, fontWeight: '600'},
 });
-
-export default App;
