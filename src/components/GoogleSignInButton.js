@@ -1,28 +1,21 @@
+import {PureComponent} from 'react';
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-const googleIcon = {
-  uri:
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/200px-Google_%22G%22_Logo.svg.png',
-};
+const googleIconPath = '../assets/google_icon.png';
 
-export default class GoogleSignInButton extends React.PureComponent {
-  static defaultProps = {
-    onPress() {
-    },
-  };
+export default class GoogleSignInButton extends PureComponent {
+
+  constructor(props) {
+    super(props)
+  }
 
   render() {
-    const {children, style, ...props} = this.props;
     return (
-      <TouchableOpacity
-        activeOpacity={0.6}
-        style={StyleSheet.flatten([styles.touchable, style])}
-        {...props}
-      >
+      <TouchableOpacity activeOpacity={0.8} style={styles.touchable} {...this.props}>
         <View style={styles.content}>
-          <Image source={googleIcon} style={styles.icon}/>
-          <Text style={styles.text}>{children}</Text>
+          <Image source={require(googleIconPath)} style={styles.icon}/>
+          <Text style={styles.text}>Se connecter avec Google</Text>
         </View>
       </TouchableOpacity>
     );
@@ -31,9 +24,9 @@ export default class GoogleSignInButton extends React.PureComponent {
 
 const styles = StyleSheet.create({
   touchable: {
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.8,
     shadowRadius: 1.5,
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: {width: 0, height: 2},
     overflow: 'visible',
     shadowColor: 'black',
     backgroundColor: 'white',
