@@ -1,6 +1,7 @@
 import * as GoogleSignIn from 'expo-google-sign-in';
 import GLOBALS from '../../Globals';
 import NavigationService from '../../utils/NavigationService';
+import {postUser} from '../../utils/requests';
 
 export const authActions = {
   LOGOUT: 'LOGOUT',
@@ -53,21 +54,16 @@ export function fetchDatabaseUser(user) {
 
     if (fetchResponse.status === 404) {
 
-      const createResponse = await fetch(GLOBALS.API_HOST + 'api/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-          uid: userUid,
-          email: user.email,
-          username: user.displayName,
-          firstname: user.firstName,
-          lastname: user.lastName,
-          photoUrl: user.photoURL,
-        }),
-      });
+      const body = {
+        uid: userUid,
+        email: user.email,
+        username: user.displayName,
+        firstname: user.firstName,
+        lastname: user.lastName,
+        photoUrl: user.photoURL,
+      };
+
+      const createResponse = await postUser(body);
 
       if (createResponse.status === 400) {
         const error = await createResponse.json();

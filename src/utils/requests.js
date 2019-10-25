@@ -35,3 +35,15 @@ export async function postAd(userId, body) {
   });
   return response;
 }
+
+export async function postUser(body) {
+  const response = await fetch(GLOBALS.API_HOST + 'api/users', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  return  response;
+}
