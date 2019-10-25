@@ -12,29 +12,29 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {connect} from 'react-redux';
+import {logout} from '../store/auth/actions';
+import GLOBALS from '../Globals';
 import {fetchUserById} from '../utils/requests';
 
-class Profile extends Component {
+class MyProfile extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      user: null,
+      user: this.props.user
     };
   }
 
-  async componentDidMount() {
-    const userId = this.props.navigation.getParam('userId');
-    const user = await fetchUserById(userId);
-    this.setState({
-      user: user,
-    });
-  }
+
+  signOut = () => {
+    this.props.logout();
+    this.props.navigation.navigate('GoogleAuthentification');
+  };
 
   render() {
     const user = this.state.user;
 
-    if (user === null) {
+    if(user === null) {
       return (
         <View style={{flex: 1, paddingTop: 20}}>
           <ActivityIndicator/>
@@ -61,6 +61,8 @@ class Profile extends Component {
           {/*  />*/}
           {/*</View>*/}
 
+          <Button onPress={this.signOut} title="Logout"/>
+
         </ScrollView>
 
       </SafeAreaView>
@@ -69,98 +71,78 @@ class Profile extends Component {
 
 }
 
-{/*<View>*/
-}
-{/*  <Text>Profil</Text>*/
-}
-{/*  <Text>Username : {user.username}</Text>*/
-}
-{/*  <Text>Firstname : {user.firstname}</Text>*/
-}
-{/*  <Text>Lastname : {user.lastname}</Text>*/
-}
-{/*  <Text>Email : {user.email}</Text>*/
-}
-{/*  <Image style={{width: 200, height: 200}} source={{uri: user.photoUrl}}/>*/
-}
-{/*  */
-}
-{/*</View>*/
-}
-
-
 const styles = StyleSheet.create({
   full_screen: {
-    flex: 3,
+    flex: 3
   },
   scrollView: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     flex: 2,
   },
   profil: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: "row",
     justifyContent: 'center',
-    marginTop: 20,
+    marginTop: 20
   },
   profil_picture: {
-    flex: 1,
+    flex: 1
   },
   name: {
-    fontWeight: 'bold',
-    fontSize: 23,
+    fontWeight: "bold",
+    fontSize: 23
   },
   paragraph: {
-    fontSize: 12,
+    fontSize: 12
   },
   user_informations: {
     flex: 1,
-    color: 'blue',
-    marginLeft: 50,
+    color: "blue",
+    marginLeft: 50
   },
   contact_button: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
     borderRadius: 5,
     marginRight: 10,
     padding: 4,
-    width: 120,
+    width: 120
   },
   contact_button_text: {
-    color: '#FFF',
-    fontWeight: 'bold',
-    fontSize: 12,
+    color: "#FFF",
+    fontWeight: "bold",
+    fontSize: 12
   },
   contact: {
     flex: 1,
-    flexDirection: 'row',
-    textAlign: 'center',
-    marginTop: 20,
+    flexDirection: "row",
+    textAlign: "center",
+    marginTop: 20
   },
   presentation: {
-    textAlign: 'center',
-    color: 'blue',
-    marginTop: 30,
+    textAlign: "center",
+    color: "blue",
+    marginTop: 30
   },
   free_donations_group: {
     flex: 3,
-    flexDirection: 'row',
+    flexDirection: "row",
     marginLeft: 65,
     marginTop: 30,
-    width: 150,
+    width: 150
   },
   blank: {
-    flex: 1,
+    flex: 1
   },
   free_donations: {
     marginTop: 15,
-    color: 'blue',
+    color: "blue",
     flex: 1,
-    textAlign: 'center',
+    textAlign: "center"
   },
   donations_list: {
     flex: 0.4,
-    flexDirection: 'row',
+    flexDirection: "row",
     marginLeft: 45,
   },
   Drop: {
@@ -170,8 +152,22 @@ const styles = StyleSheet.create({
   },
   first_annonce: {
     flex: 1,
-  },
+  }
 });
 
 
-export default connect(null, null)(Profile);
+const mapStateToProps = state => {
+  return {
+    user: state.auth.user,
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    logout: () => {
+      dispatch(logout());
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(MyProfile);
