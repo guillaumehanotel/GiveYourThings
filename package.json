@@ -15,6 +15,7 @@
     "expo-google-sign-in": "^7.0.0",
     "react": "16.9.0",
     "react-native": "0.61.2",
+    "react-native-elements": "^1.2.6",
     "react-native-flash-message": "^0.1.15",
     "react-native-gesture-handler": "^1.4.1",
     "react-native-maps": "^0.26.1",

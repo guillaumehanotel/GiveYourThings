@@ -22,8 +22,7 @@ const adsStack = createStackNavigator({
   },
   {
     headerMode: 'none',
-    initialRouteName: 'AdsList',
-    headerLayoutPreset: 'center'
+    initialRouteName: 'AdsList'
   },
 );
 
