@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {StyleSheet, View, Text, Button, ActivityIndicator, SafeAreaView, TextInput, ScrollView, Picker} from 'react-native';
 import {connect} from 'react-redux';
 import {postAd, fetchAllCategories} from '../utils/requests';
-import MultiSelect from 'react-native-multiple-select';
 
 
 class CreateAd extends Component {
@@ -11,6 +10,8 @@ class CreateAd extends Component {
     super(props);
     this.state = {
       user: this.props.user,
+      itemName: null,
+      itemID: 0,
       categories: [],
       formAd: {
         title: null,
@@ -51,13 +52,7 @@ class CreateAd extends Component {
     // TODO popup
     this.props.navigation.navigate('AdsList')
   };
-
-  onSelectedItemChange = category_id => {
-    this.setState({
-      formAd: {...this.state.formAd, category_id: category_id[0]},
-    });
-  };
-
+  
   render() {
     const categories = this.state.categories;
     if (categories.length === 0) {
@@ -98,22 +93,18 @@ class CreateAd extends Component {
             placeholder="Localisation géographique"
           />
         </ScrollView>
-        <MultiSelect
-          hideTags
-          selectText={"Catégorie"}
-          items={categories}
-          uniqueKey="id"
-          ref={(component) => {
-            this.multiSelect = component
-          }}
-          onSelectedItemsChange={this.onSelectedItemChange}
-          //selectedItems={this.state.formAd.category_id}
-          searchInputPlaceholderText="Choisissez une catégorie"
-          displayKey="name"
-          submitButtonText="Valider"
-          single={true}
-        />
-        <Text>Catégorie choisie : {this.state.formAd.category_id}</Text>
+        <Picker
+          selectedValue={this.state.categories}
+          onValueChange={(itemValue, itemIndex) =>
+            this.setState({
+              itemName: itemValue,
+              formAd: {...this.state.formAd, category_id: itemIndex},
+            })
+          }>
+          <Picker.Item label={this.state.itemName} value={this.state.itemIndex} />
+          { this.state.categories.map(r => <Picker.Item label={r.name} value={r.name} />) }
+          {console.log(this.state.formAd.category_id)}
+        </Picker>
         <Button title={'Déposer l\'annonce'} onPress={this.createAd}/>
       </SafeAreaView>
     );
