@@ -7,14 +7,10 @@ import {
   SafeAreaView,
   StyleSheet,
   ScrollView,
-  FlatList,
-  TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {logout} from '../store/auth/actions';
-import GLOBALS from '../Globals';
-import {fetchUserById} from '../utils/requests';
 
 class MyProfile extends Component {
 

@@ -10,6 +10,7 @@ import Ad from './screens/Ad';
 import Map from './screens/Map';
 import CreateAd from './screens/CreateAd';
 import Chat from './screens/Chat';
+import ContactList from './screens/ContactList';
 import Profile from './screens/Profile';
 import Loading from './screens/Loading';
 import MyProfile from './screens/MyProfile';
@@ -18,18 +19,33 @@ import MyProfile from './screens/MyProfile';
 const adsStack = createStackNavigator({
     AdsList,
     Ad,
-    Profile
+    Profile,
   },
   {
     headerMode: 'none',
     initialRouteName: 'AdsList',
-    headerLayoutPreset: 'center'
+    headerLayoutPreset: 'center',
   },
 );
 
 adsStack.navigationOptions = {
   title: 'Annonces',
   tabBarIcon: ({tintColor}) => <Icon name="newspaper-o" size={25} type='font-awesome' color={tintColor}/>,
+};
+
+const chatStack = createStackNavigator({
+  ContactList,
+  Chat,
+  },
+  {
+    initialRouteName: 'ContactList'
+});
+
+chatStack.navigationOptions = {
+  title: 'Messages',
+  tabBarIcon: ({tintColor}) => (
+    <Icon name="comment-o" size={25} type='font-awesome' color={tintColor}/>
+  ),
 };
 
 Map.navigationOptions = {
@@ -41,13 +57,6 @@ CreateAd.navigationOptions = {
   tabBarIcon: ({tintColor}) => <Icon name="plus" size={25} type='font-awesome' color={tintColor}/>,
 };
 
-Chat.navigationOptions = {
-  title: 'Messages',
-  tabBarIcon: ({tintColor}) => (
-    <Icon name="comment-o" size={25} type='font-awesome' color={tintColor}/>
-  ),
-};
-
 MyProfile.navigationOptions = {
   title: 'Profil',
   tabBarIcon: ({tintColor}) => <Icon name="user" size={25} type='font-awesome' color={tintColor}/>,
@@ -57,7 +66,7 @@ const bottomTabNavigator = createBottomTabNavigator({
   adsStack,
   Map,
   CreateAd,
-  Chat,
+  chatStack,
   MyProfile,
 }, {
   tabBarOptions: {
