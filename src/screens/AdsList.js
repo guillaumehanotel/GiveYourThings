@@ -9,6 +9,7 @@ import {
   Dimensions,
   StyleSheet,
   List,
+  ScrollView,
 } from 'react-native';
 import GLOBALS from '../Globals';
 import AdItem from '../components/AdItem';
@@ -73,7 +74,7 @@ export default class AdsList extends Component {
 
   renderSearchResults(item, adID) {
     return (
-      <Text style={{ padding: 10 }} onPress={() => this.navigateToAd(adID)}>
+      <Text style={{padding: 10}} onPress={() => this.navigateToAd(adID)}>
         {item.title}
       </Text>
     )
@@ -112,23 +113,8 @@ export default class AdsList extends Component {
             round
             autoCorrect={false}
           />
-          <View>
-            {this.state.search ? 
-              <FlatList
-                data={this.state.dataSearching}
-                ItemSeparatorComponent={this.ListViewItemSeparator}
-                renderItem={({ item }) => (
-                  this.renderSearchResults(item, item.id)
-                )}
-                enableEmptySections={true}
-                style={{ marginTop: 10 }}
-                keyExtractor={(item, index) => index.toString()}
-                
-              />
-            : null}
-          </View>
-          <View style={{marginTop: 20, height: Dimensions.get('window').height, width: Dimensions.get('window').width}}>
-            <FlatList
+          <View style={{marginTop: 20}}>
+            <FlatList style={{position:"absolute"}}
               data={this.state.adsList}
               renderItem={({item}) => <AdItem ad={item}/>}
               keyExtractor={item => item.id}
@@ -142,6 +128,20 @@ export default class AdsList extends Component {
                 />
               }
             />
+          </View>
+          <View style={{backgroundColor: "white"}}>
+            {this.state.search ?
+              <FlatList
+                data={this.state.dataSearching}
+                ItemSeparatorComponent={this.ListViewItemSeparator}
+                renderItem={({ item }) => (
+                  this.renderSearchResults(item, item.id)
+                )}
+                enableEmptySections={true}
+                style={{ marginTop: 10}}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            : null}
           </View>
         </SafeAreaView>
       );

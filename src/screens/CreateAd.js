@@ -11,7 +11,6 @@ class CreateAd extends Component {
     this.state = {
       user: this.props.user,
       itemName: null,
-      itemID: 0,
       categories: [],
       formAd: {
         title: null,
@@ -85,7 +84,7 @@ class CreateAd extends Component {
           <TextInput
             value={this.state.formAd.condition}
             onChangeText={value => this.setState({formAd: {...this.state.formAd, condition: value}})}
-            placeholder="Êtat"
+            placeholder="Etat"
           />
           <TextInput
             value={this.state.formAd.localisation}
@@ -102,8 +101,7 @@ class CreateAd extends Component {
             })
           }>
           <Picker.Item label={this.state.itemName} value={this.state.itemIndex} />
-          { this.state.categories.map(r => <Picker.Item label={r.name} value={r.name} />) }
-          {console.log(this.state.formAd.category_id)}
+          {this.state.categories.map(r => <Picker.Item label={r.name} value={r.name} />)}
         </Picker>
         <Button title={'Déposer l\'annonce'} onPress={this.createAd}/>
       </SafeAreaView>
