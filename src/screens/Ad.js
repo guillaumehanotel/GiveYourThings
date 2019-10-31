@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {View, Text, SafeAreaView, ScrollView, Image, TouchableHighlight, Button, ActivityIndicator} from 'react-native';
+import {View, Text, SafeAreaView, ScrollView, Image, TouchableHighlight, Button, ActivityIndicator, BackHandler, TouchableOpacity} from 'react-native';
 import {withNavigation} from 'react-navigation';
 import GLOBALS from '../Globals';
+import {Icon} from 'react-native-elements';
 import {fetchAdById, fetchUserById} from '../utils/requests'
 
 class Ad extends Component {
@@ -24,6 +25,15 @@ class Ad extends Component {
     })
   }
 
+  
+
+  onPress = () => {
+    this.props.navigation.goBack(null);
+      return true;
+  }
+
+  
+
   render() {
     const ad = this.state.ad;
     const user = this.state.user;
@@ -37,12 +47,25 @@ class Ad extends Component {
     }
 
     return (
+      
       <SafeAreaView>
+        
         <ScrollView
           contentInsetAdjustmentBehavior="automatic">
-
+            
           <View style={{flex: 1, flexDirection: 'row', marginTop: 15}}>
+          <TouchableOpacity onPress={this.onPress}>
+            <Icon
+            name='arrow-left'
+            type='font-awesome'
+            color='#517fa4'
+            style={{alignSelf: 'flex-start',
+              position: 'absolute'}}
+            
+          />
+          </TouchableOpacity>
             <Text style={{flex: 1}}/>
+            
             <Image
               style={{flex: 1, width: 200, height: 200}}
               source={{uri: 'https://aliceasmartialarts.com/wp-content/uploads/2017/04/default-image.jpg'}}
@@ -78,6 +101,7 @@ class Ad extends Component {
               onPress={() => this.props.navigation.navigate('ChatPage', {ownerID: ad && ad.user_id})}
             />
             <Text style={{flex: 1}}/>
+            
           </View>
         </ScrollView>
       </SafeAreaView>

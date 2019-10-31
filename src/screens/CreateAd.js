@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, Button, ActivityIndicator, SafeAreaView, TextInput, ScrollView, Picker} from 'react-native';
+import {StyleSheet, View, Text, Button, ActivityIndicator, SafeAreaView, TextInput, ScrollView, Picker, PermissionsAndroid} from 'react-native';
 import {connect} from 'react-redux';
 import {postAd, fetchAllCategories} from '../utils/requests';
 import MultiSelect from 'react-native-multiple-select';
+import Geolocation from 'react-native-geolocation-service';
 
+const APIKEY = "AIzaSyB4ZD3zbfTEfF7qMZ1mSfA8Dz67VuZZ5aU";
 
 class CreateAd extends Component {
 
@@ -20,8 +22,11 @@ class CreateAd extends Component {
         localisation: null,
         user_id: this.props.user.id,
         category_id: null,
+        latitude: null,
+        longitude: null
       },
     };
+    this.getAddress = this.getAddress.bind(this)
   }
 
   async componentDidMount() {
@@ -34,8 +39,77 @@ class CreateAd extends Component {
         };
       }),
     });
+    this.getCoordsPosition()
   }
 
+  async getCoordsPosition() {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          'title': 'ReactNativeCode Location Permission',
+          'message': 'GiveYourThings App needs access to your location '
+        }
+      )
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+   
+        console.log("Location Permission Granted.");
+        Geolocation.getCurrentPosition(
+          (position) => {
+              console.log(position);
+              this.setState({
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
+              })
+              console.log(this.state.latitude)
+          },
+          (error) => {
+              // See error code charts below.
+              console.log(error.code, error.message);
+          },
+          { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+        );
+      }
+      else {
+   
+        console.log("Location Permission Not Granted");
+   
+      }
+    } catch (err) {
+      console.warn(err)
+    }
+    Geolocation.clearWatch(this.watchID);
+    this.watchID = Geolocation.watchPosition(
+      position => {
+        console.log("New position!");
+      },
+      error => console.log(error),
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        distanceFilter: 0
+      }
+    );
+
+  }
+
+  async getAddress () {
+    let url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.latitude},${this.state.longitude}&key=${APIKEY}`;
+    try {
+      let response = await fetch(url);
+      let responseJson = await response.json();
+      console.log(responseJson)
+      this.setState({
+        localisation: response.data.formatted_address
+      })
+      // do what you want with the responseJson here.
+      return responseJson
+    } catch (error) {
+      console.warn(error); 
+      // make sure you handle error and return something if an error occurs
+    }
+  }
+  
   createAd = async () => {
     const response = await postAd(this.state.user.id, this.state.formAd);
     if (response.status === 201) {
@@ -95,6 +169,7 @@ class CreateAd extends Component {
           <TextInput
             value={this.state.formAd.localisation}
             onChangeText={value => this.setState({formAd: {...this.state.formAd, localisation: value}})}
+            onChange={this.getAddress}
             placeholder="Localisation géographique"
           />
         </ScrollView>
