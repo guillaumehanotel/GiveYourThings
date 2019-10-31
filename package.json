@@ -10,6 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "events": "^3.0.0",
     "expo-app-auth": "^7.0.0",
     "expo-constants": "^7.0.0",
     "expo-google-sign-in": "^7.0.0",

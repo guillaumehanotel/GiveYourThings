@@ -4,6 +4,8 @@ import {connect} from 'react-redux';
 import {postAd, fetchAllCategories} from '../utils/requests';
 import MultiSelect from 'react-native-multiple-select';
 import Geolocation from 'react-native-geolocation-service';
+import { throwStatement } from '@babel/types';
+import { get } from 'http';
 
 const APIKEY = "AIzaSyB4ZD3zbfTEfF7qMZ1mSfA8Dz67VuZZ5aU";
 
@@ -26,7 +28,7 @@ class CreateAd extends Component {
         longitude: null
       },
     };
-    this.getAddress = this.getAddress.bind(this)
+    
   }
 
   async componentDidMount() {
@@ -42,40 +44,46 @@ class CreateAd extends Component {
     this.getCoordsPosition()
   }
 
-  async getCoordsPosition() {
+
+  getCoordsPosition = async () => {
     try {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
         {
-          'title': 'ReactNativeCode Location Permission',
+          'title': 'GiveYourThings Location Permission',
           'message': 'GiveYourThings App needs access to your location '
         }
       )
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
    
         console.log("Location Permission Granted.");
-        Geolocation.getCurrentPosition(
+
+        const position = await Geolocation.getCurrentPosition(
           (position) => {
-              console.log(position);
+              console.log(1, position);
+              const latitude = position.coords.latitude
+              const longitude = position.coords.longitude
+              this.getAddress(latitude, longitude);
+              /*
               this.setState({
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude
-              })
-              console.log(this.state.latitude)
+                formAd: {
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude
+                }
+              })*/
+              console.log(2, this.state.formAd.latitude)
           },
           (error) => {
-              // See error code charts below.
               console.log(error.code, error.message);
           },
           { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
         );
       }
       else {
-   
         console.log("Location Permission Not Granted");
-   
       }
-    } catch (err) {
+    } 
+    catch (err) {
       console.warn(err)
     }
     Geolocation.clearWatch(this.watchID);
@@ -93,20 +101,21 @@ class CreateAd extends Component {
 
   }
 
-  async getAddress () {
-    let url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.latitude},${this.state.longitude}&key=${APIKEY}`;
+  getAddress = async (latitude, longitude) => {
+    let url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${APIKEY}`;
     try {
       let response = await fetch(url);
       let responseJson = await response.json();
-      console.log(responseJson)
+      console.log(4, responseJson)
       this.setState({
-        localisation: response.data.formatted_address
+        formAd : {
+          localisation: responseJson.results[0].formatted_address
+        }
       })
-      // do what you want with the responseJson here.
-      return responseJson
-    } catch (error) {
+      console.log(5, this.state.formAd.localisation)
+    } 
+    catch (error) {
       console.warn(error); 
-      // make sure you handle error and return something if an error occurs
     }
   }
   
@@ -134,7 +143,8 @@ class CreateAd extends Component {
 
   render() {
     const categories = this.state.categories;
-    if (categories.length === 0) {
+    const localisation = this.state.formAd.localisation;
+    if (categories.length === 0 && localisation === null) {
       return (
         <View style={{flex: 1, paddingTop: 20}}>
           <ActivityIndicator/>
