@@ -4,8 +4,7 @@ import {connect} from 'react-redux';
 import {postAd, fetchAllCategories} from '../utils/requests';
 import MultiSelect from 'react-native-multiple-select';
 import Geolocation from 'react-native-geolocation-service';
-import { throwStatement } from '@babel/types';
-import { get } from 'http';
+
 
 const APIKEY = "AIzaSyB4ZD3zbfTEfF7qMZ1mSfA8Dz67VuZZ5aU";
 
