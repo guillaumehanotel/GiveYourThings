@@ -9,7 +9,6 @@ import {
   Dimensions,
   StyleSheet,
 } from 'react-native';
-import GLOBALS from '../Globals';
 import AdItem from '../components/AdItem';
 import {fetchAllAds} from '../utils/requests';
 

@@ -21,7 +21,6 @@ class MyProfile extends Component {
     };
   }
 
-
   signOut = () => {
     this.props.logout();
     this.props.navigation.navigate('GoogleAuthentification');

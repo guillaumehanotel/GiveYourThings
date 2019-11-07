@@ -5,24 +5,30 @@ import {
   SafeAreaView,
   ScrollView,
   Image,
-  TouchableHighlight,
-  Button,
   ActivityIndicator,
   StyleSheet, Dimensions, TouchableOpacity,
 } from 'react-native';
 import {withNavigation} from 'react-navigation';
-import GLOBALS from '../Globals';
-import {fetchAdById, fetchCategoryById, fetchUserById} from '../utils/requests';
+import {
+  fetchAdById,
+  fetchCategoryById,
+  fetchDiscussionsByUserIdAndAdId,
+  fetchUserById,
+  postDiscussion,
+} from '../utils/requests';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {formatAdDate} from '../utils/helpers';
+import {connect} from 'react-redux';
+
 
 class Ad extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
+      user: this.props.user,
       ad: null,
-      user: null,
+      giver: null,
       category: null,
     };
   }
@@ -30,21 +36,43 @@ class Ad extends Component {
   async componentDidMount() {
     const adId = this.props.navigation.getParam('adId');
     const ad = await fetchAdById(adId);
-    const user = await fetchUserById(ad.user_id);
+    const giver = await fetchUserById(ad.user_id);
     const category = await fetchCategoryById(ad.category_id);
     this.setState({
-      user: user,
+      giver: giver,
       ad: ad,
       category: category,
     });
   }
 
+  openDiscussion = async () => {
+    const user = this.state.user;
+
+    const response = await postDiscussion(user.id, this.state.ad.id);
+    let error = await response.text();
+    console.log(error)
+    console.log(response.status)
+    if (response.status === 201 || response.status === 200) {
+
+      console.log(response.headers)
+      const discussionId = response.headers.map.location.split('/').pop();
+
+      this.props.navigation.navigate('Discussion', {
+        discussionId: discussionId,
+        requesterId: user.id,
+        requesterUsername: user.username,
+        requesterAvatar: user.photoUrl,
+        title: this.state.ad.title,
+      });
+    }
+  };
+
   render() {
     const ad = this.state.ad;
-    const user = this.state.user;
+    const giver = this.state.giver;
     const category = this.state.category;
 
-    if (ad === null || user === null || category === null) {
+    if (ad === null || giver === null || category === null) {
       return (
         <View style={{flex: 1, paddingTop: 20}}>
           <ActivityIndicator/>
@@ -53,6 +81,9 @@ class Ad extends Component {
     }
 
     const adDate = formatAdDate(ad);
+
+    const isMyAd = ad.user_id === this.state.user.id;
+    const isReserved = ad.booker_id !== null;
 
     return (
       <SafeAreaView>
@@ -63,10 +94,19 @@ class Ad extends Component {
             source={{uri: 'https://img0.leboncoin.fr/ad-image/12455473de9f952252e8cb02d3bd4debd09d7d42.jpg'}}
           />
           <View style={{flex: 1, alignItems: 'center'}}>
-            <TouchableOpacity style={styles.contact_btn}
-                              onPress={() => this.props.navigation.navigate('ChatPage', {ownerID: ad && ad.user_id})}>
-              <Text style={styles.contact_text}>CONTACTER LE DONNEUR</Text>
-            </TouchableOpacity>
+            {isMyAd ?
+              <TouchableOpacity style={styles.contact_btn}
+                                onPress={() => this.props.navigation.navigate('AdDiscussion', {
+                                  adId: ad.id,
+                                  title: ad.title,
+                                })}>
+                <Text style={styles.contact_text}>VOIR MESSAGES</Text>
+              </TouchableOpacity>
+              :
+              <TouchableOpacity style={styles.contact_btn} onPress={this.openDiscussion}>
+                <Text style={styles.contact_text}>CONTACTER LE DONNEUR</Text>
+              </TouchableOpacity>
+            }
           </View>
 
           <View style={{
@@ -102,7 +142,12 @@ class Ad extends Component {
 
 
           <View style={{marginTop: 15, marginLeft: 15}}>
-            <Text style={{fontWeight: 'bold', fontSize: 26}}>{ad.title}</Text>
+            <View style={{alignItems: 'center', flexDirection: 'row'}}>
+              <Text style={{fontWeight: 'bold', fontSize: 26}}>{ad.title}</Text>
+              {isReserved &&
+                <Text style={{marginLeft: 150, fontSize: 17, color: '#EF565A'}}>Réservé</Text>
+              }
+            </View>
 
             <View style={{flex: 1, flexWrap: 'wrap', alignItems: 'center', flexDirection: 'row', marginTop: 0}}>
               <Icon style={{marginRight: 10, bottom: 5}} name="folder" size={16} type='font-awesome' color={'#EF565A'}/>
@@ -121,8 +166,8 @@ class Ad extends Component {
             marginTop: 20,
             marginRight: 20,
           }}>
-            <Text style={{fontSize: 17, fontWeight: 'bold', marginRight: 10}}>{user.username}</Text>
-            <Image style={{width: 50, height: 50, borderRadius: 50}} source={{uri: user.photoUrl}}/>
+            <Text style={{fontSize: 17, fontWeight: 'bold', marginRight: 10}}>{giver.username}</Text>
+            <Image style={{width: 50, height: 50, borderRadius: 50}} source={{uri: giver.photoUrl}}/>
           </View>
 
         </ScrollView>
@@ -132,7 +177,13 @@ class Ad extends Component {
 
 }
 
-export default withNavigation(Ad);
+const mapStateToProps = state => {
+  return {
+    user: state.auth.user,
+  };
+};
+
+export default connect(mapStateToProps, null)(Ad);
 
 
 const styles = StyleSheet.create({

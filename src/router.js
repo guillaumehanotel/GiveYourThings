@@ -34,15 +34,9 @@ adsStack.navigationOptions = {
 };
 
 const chatStack = createStackNavigator({
-    DiscussedAds : {
-      screen: DiscussedAds
-    },
-    AdDiscussion: {
-      screen: AdDiscussion,
-    },
-    Discussion: {
-      screen: Discussion,
-    },
+    DiscussedAds,
+    AdDiscussion,
+    Discussion,
   },
   {
     initialRouteName: 'DiscussedAds',
