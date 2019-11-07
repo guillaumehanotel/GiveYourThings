@@ -49,12 +49,8 @@ class Ad extends Component {
     const user = this.state.user;
 
     const response = await postDiscussion(user.id, this.state.ad.id);
-    let error = await response.text();
-    console.log(error)
-    console.log(response.status)
     if (response.status === 201 || response.status === 200) {
 
-      console.log(response.headers)
       const discussionId = response.headers.map.location.split('/').pop();
 
       this.props.navigation.navigate('Discussion', {

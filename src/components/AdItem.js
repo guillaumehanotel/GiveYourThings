@@ -30,7 +30,7 @@ class AdItem extends Component {
       <View style={styles.item}>
         <TouchableOpacity onPress={() => this.navigateToAd(ad.id)}>
           <Image style={styles.img}
-                 source={{uri: 'https://img0.leboncoin.fr/ad-image/12455473de9f952252e8cb02d3bd4debd09d7d42.jpg'}}/>
+                 source={{uri: 'http://vps687959.ovh.net/images/plante.jpg'}}/>
         </TouchableOpacity>
         <View style={styles.item_footer}>
           {is_reserved && <View style={styles.reserved_banner}><Text
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginTop: 5,
     height: 150,
-    width: 175,
+    width: 150,
 
     borderTopLeftRadius: 5,
     borderTopRightRadius: 5,
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   },
   reserved_banner: {
     backgroundColor: '#EF565A',
-    width: 175,
+    width: 150,
     position: 'absolute'
   },
 });

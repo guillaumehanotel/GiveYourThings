@@ -36,6 +36,12 @@ export async function fetchAdsByUserIdAndState(userId, state) {
   return ads;
 }
 
+export async function fetchOnlineAds() {
+  const response = await fetch(GLOBALS.API_HOST + 'api/ads/online');
+  const ads = await response.json();
+  return ads;
+}
+
 export async function fetchDiscussionsByUserIdAndAdId(userId, adId) {
   const response = await fetch(GLOBALS.API_HOST + 'api/users/' + userId + '/ads/' + adId + '/discussions');
   const discussions = await response.json();
