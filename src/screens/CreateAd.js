@@ -59,18 +59,11 @@ class CreateAd extends Component {
 
         const position = await Geolocation.getCurrentPosition(
           (position) => {
-              console.log(1, position);
+              
               const latitude = position.coords.latitude
               const longitude = position.coords.longitude
               this.getAddress(latitude, longitude);
-              /*
-              this.setState({
-                formAd: {
-                  latitude: position.coords.latitude,
-                  longitude: position.coords.longitude
-                }
-              })*/
-              console.log(2, this.state.formAd.latitude)
+              
           },
           (error) => {
               console.log(error.code, error.message);
@@ -105,13 +98,12 @@ class CreateAd extends Component {
     try {
       let response = await fetch(url);
       let responseJson = await response.json();
-      console.log(4, responseJson)
       this.setState({
         formAd : {
           localisation: responseJson.results[0].formatted_address
         }
       })
-      console.log(5, this.state.formAd.localisation)
+      
     } 
     catch (error) {
       console.warn(error); 
@@ -178,7 +170,6 @@ class CreateAd extends Component {
           <TextInput
             value={this.state.formAd.localisation}
             onChangeText={value => this.setState({formAd: {...this.state.formAd, localisation: value}})}
-            onChange={this.getAddress}
             placeholder="Localisation géographique"
           />
         </ScrollView>
