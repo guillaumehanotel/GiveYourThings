@@ -1,5 +1,15 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, Button, ActivityIndicator, SafeAreaView, TextInput, ScrollView, Picker} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Button,
+  ActivityIndicator,
+  SafeAreaView,
+  TextInput,
+  ScrollView,
+  Picker,
+} from 'react-native';
 import {connect} from 'react-redux';
 import {postAd, fetchAllCategories} from '../utils/requests';
 import MultiSelect from 'react-native-multiple-select';
@@ -43,13 +53,13 @@ class CreateAd extends Component {
     } else {
       if (response.status === 400) {
         const error = await response.json();
-        console.log(error)
+        console.log(error);
       } else {
         console.log('fail to create ad');
       }
     }
     // TODO popup
-    this.props.navigation.navigate('AdsList')
+    this.props.navigation.navigate('AdsList');
   };
 
   onSelectedItemChange = category_id => {
@@ -100,11 +110,11 @@ class CreateAd extends Component {
         </ScrollView>
         <MultiSelect
           hideTags
-          selectText={"Catégorie"}
+          selectText={'Catégorie'}
           items={categories}
           uniqueKey="id"
           ref={(component) => {
-            this.multiSelect = component
+            this.multiSelect = component;
           }}
           onSelectedItemsChange={this.onSelectedItemChange}
           //selectedItems={this.state.formAd.category_id}

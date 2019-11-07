@@ -15,6 +15,10 @@ import {fetchAllAds} from '../utils/requests';
 
 export default class AdsList extends Component {
 
+  static navigationOptions = {
+    title: 'Dons',
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -80,6 +84,7 @@ export default class AdsList extends Component {
 }
 
 const styles = StyleSheet.create({
+
   scrollView: {
     backgroundColor: 'white',
   },

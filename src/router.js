@@ -4,13 +4,15 @@ import {createAppContainer, createSwitchNavigator} from 'react-navigation';
 import GoogleAuthentification from './screens/GoogleAuthentification';
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { HeaderBackButton } from 'react-navigation-stack';
 
 import AdsList from './screens/AdsList';
 import Ad from './screens/Ad';
 import Map from './screens/Map';
 import CreateAd from './screens/CreateAd';
-import Chat from './screens/Chat';
-import ContactList from './screens/ContactList';
+import DiscussedAds from './screens/DiscussedAds';
+import AdDiscussion from './screens/AdDiscussion';
+import Discussion from './screens/Discussion';
 import Profile from './screens/Profile';
 import Loading from './screens/Loading';
 import MyProfile from './screens/MyProfile';
@@ -19,12 +21,10 @@ import MyProfile from './screens/MyProfile';
 const adsStack = createStackNavigator({
     AdsList,
     Ad,
-    Profile,
+    Profile
   },
   {
-    headerMode: 'none',
-    initialRouteName: 'AdsList',
-    headerLayoutPreset: 'center',
+    initialRouteName: 'AdsList'
   },
 );
 
@@ -34,12 +34,19 @@ adsStack.navigationOptions = {
 };
 
 const chatStack = createStackNavigator({
-  ContactList,
-  Chat,
+    DiscussedAds : {
+      screen: DiscussedAds
+    },
+    AdDiscussion: {
+      screen: AdDiscussion,
+    },
+    Discussion: {
+      screen: Discussion,
+    },
   },
   {
-    initialRouteName: 'ContactList'
-});
+    initialRouteName: 'DiscussedAds',
+  });
 
 chatStack.navigationOptions = {
   title: 'Messages',
@@ -71,6 +78,7 @@ const bottomTabNavigator = createBottomTabNavigator({
 }, {
   tabBarOptions: {
     showIcon: true,
+    activeTintColor: '#EF565A'
   },
 });
 

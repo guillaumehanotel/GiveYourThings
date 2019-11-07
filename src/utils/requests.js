@@ -24,6 +24,12 @@ export async function fetchAllCategories() {
   return categories;
 }
 
+export async function fetchCategoryById(categoryId) {
+  const response = await fetch(GLOBALS.API_HOST + 'api/categories/' + categoryId);
+  const category = await response.json();
+  return category;
+}
+
 export async function postAd(userId, body) {
   const response = await fetch(GLOBALS.API_HOST + 'api/users/' + userId + '/ads', {
     method: 'POST',
