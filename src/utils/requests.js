@@ -38,8 +38,6 @@ export async function fetchAdsByUserIdAndState(userId, state) {
 
 export async function fetchDiscussionsByUserIdAndAdId(userId, adId) {
   const response = await fetch(GLOBALS.API_HOST + 'api/users/' + userId + '/ads/' + adId + '/discussions');
-  const error = await response.text();
-  console.log(error);
   const discussions = await response.json();
   return discussions;
 }
