@@ -12,6 +12,16 @@ export async function fetchAdById(adId) {
   return ad;
 }
 
+export async function fetchAdByName(adName) {
+  const response = await fetch(GLOBALS.API_HOST + 'api/ads/?title=' + adName);
+  if (response.status == 200) {
+    const ads = await response.json();
+  } else {
+    const ads = []
+  }
+  return ad;
+}
+
 export async function fetchUserById(userId) {
   const response = await fetch(GLOBALS.API_HOST + 'api/users/' + userId);
   const user = await response.json();
