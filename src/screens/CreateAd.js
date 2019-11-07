@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, Button, ActivityIndicator, SafeAreaView, TextInput, ScrollView, Picker} from 'react-native';
+import {StyleSheet, View, Text, Button, Image, ActivityIndicator, SafeAreaView, TextInput, ScrollView, Picker} from 'react-native';
 import {connect} from 'react-redux';
 import {postAd, fetchAllCategories} from '../utils/requests';
+import ImagePicker from 'react-native-image-picker';
 
 
 class CreateAd extends Component {
@@ -9,6 +10,9 @@ class CreateAd extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      photo: null,
+      filePath: null,
+      fileUri: null,
       user: this.props.user,
       itemName: null,
       categories: [],
@@ -40,6 +44,8 @@ class CreateAd extends Component {
     const response = await postAd(this.state.user.id, this.state.formAd);
     if (response.status === 201) {
       console.log('ad created');
+      //const adLocation = response.map.headers.location
+      //this.sendPicture(adLocation)
     } else {
       if (response.status === 400) {
         const error = await response.json();
@@ -52,7 +58,54 @@ class CreateAd extends Component {
     this.props.navigation.navigate('AdsList')
   };
   
+  sendPicture(adLocation) {
+    const obj = {
+      uploadUrl: 'http://vps687959.ovh.net/api/ads/' + adLocation + '/image-upload',
+      method: 'POST',
+      files: [{
+        filename: 'file',
+        filepath: filePath,
+        filetype: 'image/jpeg'
+      }]
+    };
+
+    FileUpload.upload(obj, (err, result) => {
+      console.log(result.data)
+      console.log(err)
+    });
+  }
+
+  handleChoosePhoto = () => {
+    const options = {
+      noData: true,
+    }
+    ImagePicker.launchImageLibrary(options, response => {
+      if (response.uri) {
+        this.setState({
+          photo: response,
+        })
+      }
+    })
+  }
+
+  handleChooseCameraPhoto = () => {
+    let options = {
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+    ImagePicker.launchCamera(options, (response) => {
+      this.setState({
+        filePath: response,
+        photo: {uri: 'data:image/jpeg;base64,' + response.data},
+        fileUri: response.uri,
+      })
+    })
+  }
+
   render() {
+    const { photo } = this.state
     const categories = this.state.categories;
     if (categories.length === 0) {
       return (
@@ -103,7 +156,23 @@ class CreateAd extends Component {
           <Picker.Item label={this.state.itemName} value={this.state.itemIndex} />
           {this.state.categories.map(r => <Picker.Item label={r.name} value={r.name} />)}
         </Picker>
-        <Button title={'Déposer l\'annonce'} onPress={this.createAd}/>
+        <View style={{alignItems: 'center', justifyContent: 'center'}}>
+        {
+          photo ? (
+              <Image
+                source={{ uri: photo.uri }}
+                style={{ width: 300, height: 300 }}
+              />
+            )
+          :
+              <Text>Merci de choisir une image</Text>
+        }
+        </View>
+        <View style={{padding: 10}}>
+          <Button title="Ouvrir la Galerie" onPress={this.handleChoosePhoto} />
+          <Button title="Prendre une photo" onPress={this.handleChooseCameraPhoto} />
+          <Button title={'Déposer l\'annonce'} onPress={this.createAd}/>
+        </View>
       </SafeAreaView>
     );
   }
@@ -126,6 +195,13 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginLeft: 20,
     color: 'blue',
+  },
+  images: {
+    width: 150,
+    height: 150,
+    borderColor: 'black',
+    borderWidth: 1,
+    marginHorizontal: 3
   },
 });
 
