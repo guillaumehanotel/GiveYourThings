@@ -19,6 +19,8 @@ export default class AdsList extends Component {
     super(props);
     this.state = {
       adsList: [],
+      latitude: null,
+      longitude: null,
       refreshing: true,
     };
   }

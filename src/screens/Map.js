@@ -1,69 +1,21 @@
 import React, {Component} from 'react';
 import {Text, StyleSheet, View, TextInput} from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
-
+import {fetchAllAds} from '../utils/requests';
 
 export default class Map extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      latitude: null,
-      longitude: null
+      adsList:[],
+      latitude:null,
+      longitude:null
     };
   }
 
   onRegionChange(region) {
     this.setState({ region });
-  }
-
-  getCoordsPosition = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          'title': 'GiveYourThings Location Permission',
-          'message': 'GiveYourThings App needs access to your location '
-        }
-      )
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-   
-        console.log("Location Permission Granted.");
-
-        const position = await Geolocation.getCurrentPosition(
-          (position) => {
-              
-              const latitude = position.coords.latitude
-              const longitude = position.coords.longitude
-              this.getAddress(latitude, longitude);
-              
-          },
-          (error) => {
-              console.log(error.code, error.message);
-          },
-          { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-        );
-      }
-      else {
-        console.log("Location Permission Not Granted");
-      }
-    } 
-    catch (err) {
-      console.warn(err)
-    }
-    Geolocation.clearWatch(this.watchID);
-    this.watchID = Geolocation.watchPosition(
-      position => {
-        console.log("New position!");
-      },
-      error => console.log(error),
-      {
-        enableHighAccuracy: true,
-        timeout: 20000,
-        distanceFilter: 0
-      }
-    );
-
   }
 
   render() {
