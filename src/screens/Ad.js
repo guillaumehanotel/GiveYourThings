@@ -8,18 +8,15 @@ import {
   ActivityIndicator,
   StyleSheet, Dimensions, TouchableOpacity,
 } from 'react-native';
-import {withNavigation} from 'react-navigation';
 import {
   fetchAdById,
   fetchCategoryById,
-  fetchDiscussionsByUserIdAndAdId,
   fetchUserById,
   postDiscussion,
 } from '../utils/requests';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {formatAdDate} from '../utils/helpers';
 import {connect} from 'react-redux';
-
 
 class Ad extends Component {
 
@@ -86,6 +83,7 @@ class Ad extends Component {
     const isReserved = ad.booker_id !== null;
 
     return (
+
       <SafeAreaView>
         <ScrollView contentInsetAdjustmentBehavior="automatic">
 
