@@ -16,6 +16,7 @@ import Discussion from './screens/Discussion';
 import Profile from './screens/Profile';
 import Loading from './screens/Loading';
 import MyProfile from './screens/MyProfile';
+import MyAds from './screens/MyAds';
 
 
 const adsStack = createStackNavigator({
@@ -42,6 +43,14 @@ const chatStack = createStackNavigator({
     initialRouteName: 'DiscussedAds',
   });
 
+const MyAdsStack = createStackNavigator({
+    MyProfile,
+    MyAds,
+  },
+  {
+    initialRouteName: 'MyProfile',
+  });
+
 chatStack.navigationOptions = {
   title: 'Messages',
   tabBarIcon: ({tintColor}) => (
@@ -58,7 +67,7 @@ CreateAd.navigationOptions = {
   tabBarIcon: ({tintColor}) => <Icon name="plus" size={25} type='font-awesome' color={tintColor}/>,
 };
 
-MyProfile.navigationOptions = {
+MyAdsStack.navigationOptions = {
   title: 'Profil',
   tabBarIcon: ({tintColor}) => <Icon name="user" size={25} type='font-awesome' color={tintColor}/>,
 };
@@ -68,7 +77,7 @@ const bottomTabNavigator = createBottomTabNavigator({
   Map,
   CreateAd,
   chatStack,
-  MyProfile,
+  MyAdsStack,
 }, {
   tabBarOptions: {
     showIcon: true,

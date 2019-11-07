@@ -12,6 +12,12 @@ export async function fetchAdById(adId) {
   return ad;
 }
 
+export async function fetchAdByUserId(userId) {
+  const response = await fetch(GLOBALS.API_HOST + 'api/users/' + userId + '/ads');
+  const ad = await response.json();
+  return ad;
+}
+
 export async function fetchUserById(userId) {
   const response = await fetch(GLOBALS.API_HOST + 'api/users/' + userId);
   const user = await response.json();

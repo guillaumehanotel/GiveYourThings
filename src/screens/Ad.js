@@ -141,7 +141,7 @@ class Ad extends Component {
             <View style={{alignItems: 'center', flexDirection: 'row'}}>
               <Text style={{fontWeight: 'bold', fontSize: 26}}>{ad.title}</Text>
               {isReserved &&
-                <Text style={{marginLeft: 150, fontSize: 17, color: '#EF565A'}}>Réservé</Text>
+                <Text style={{marginLeft: 125, fontSize: 17, color: '#EF565A'}}>Réservé</Text>
               }
             </View>
 

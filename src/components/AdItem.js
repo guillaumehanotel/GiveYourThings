@@ -79,10 +79,10 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 5,
   },
   item_footer: {
-    marginLeft: 5,
     bottom: 10
   },
   reserved_banner: {
+    marginLeft: 5,
     backgroundColor: '#EF565A',
     width: 150,
     position: 'absolute'

@@ -10,14 +10,14 @@ import {
   StyleSheet,
 } from 'react-native';
 import AdItem from '../components/AdItem';
-import {fetchAllAds} from '../utils/requests';
+import {fetchAllAds, fetchAdByUserId} from '../utils/requests';
 import {SearchBar} from 'react-native-elements';
 
 
-export default class AdsList extends Component {
+export default class MyAds extends Component {
 
   static navigationOptions = {
-    title: 'Dons',
+    title: 'Mes annonces publiées',
   };
 
   constructor(props) {
@@ -34,7 +34,7 @@ export default class AdsList extends Component {
   }
 
   async componentDidMount() {
-    const ads = await fetchAllAds();
+    const ads = await fetchAdByUserId(3);
     this.setState({
       adsList: ads,
       refreshing: false,

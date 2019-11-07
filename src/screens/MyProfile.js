@@ -8,6 +8,9 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
+  FlatList,
+  Dimensions,
+  RefreshControl,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {logout} from '../store/auth/actions';
@@ -18,6 +21,9 @@ class MyProfile extends Component {
     super(props);
     this.state = {
       user: this.props.user
+    };
+    this.navigateToMyAds = (userID) => {
+      this.props.navigation.navigate('MyAds', {userID: userID});
     };
   }
 
@@ -56,7 +62,11 @@ class MyProfile extends Component {
           {/*  />*/}
           {/*</View>*/}
 
-          <Button onPress={this.signOut} title="Logout"/>
+          <View style={{alignContent: "center", justifyContent: "center"}}>
+            <Button onPress={() => this.navigateToMyAds(1)} title="Annonce(s) publiée(s)"/>
+            <Button onPress={this.signOut} title="Logout"/>
+          </View>
+          
 
         </ScrollView>
 
