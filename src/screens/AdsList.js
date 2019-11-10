@@ -10,7 +10,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import AdItem from '../components/AdItem';
-import {fetchAllAds} from '../utils/requests';
+import {fetchAdsByUserId, fetchAllAds} from '../utils/requests';
 import {SearchBar} from 'react-native-elements';
 
 
@@ -34,7 +34,14 @@ export default class AdsList extends Component {
   }
 
   async componentDidMount() {
-    const ads = await fetchAllAds();
+    const adsOwnerId = this.props.navigation.getParam('adsOwnerId');
+    let ads = [];
+    if (adsOwnerId !== null) {
+      ads = await fetchAdsByUserId(3);
+    } else {
+      ads = await fetchAllAds();
+    }
+
     this.setState({
       adsList: ads,
       refreshing: false,
@@ -57,14 +64,11 @@ export default class AdsList extends Component {
 
   ListViewItemSeparator = () => {
     return (
-      <View
-        style={{
-          height: 0.3,
-          width: '100%',
-          backgroundColor: '#080808',
-        }}
-      />
-    );
+      <View style={{
+        height: 0.3,
+        width: '100%',
+        backgroundColor: '#080808',
+      }}/>);
   };
 
   renderSearchResults(item, adID) {

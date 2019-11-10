@@ -29,10 +29,11 @@ class AdItem extends Component {
     return (
       <View style={styles.item}>
         <TouchableOpacity onPress={() => this.navigateToAd(ad.id)}>
-          <Image style={styles.img}
-                 source={{uri: 'http://vps687959.ovh.net/images/plante.jpg'}}/>
+          <Image style={styles.img} source={{uri: ad.image_url}}/>
         </TouchableOpacity>
+
         <View style={styles.item_footer}>
+
           {is_reserved && <View style={styles.reserved_banner}><Text
             style={{color: '#fff', fontWeight: 'bold', textAlign: 'center'}}>RÉSERVÉ</Text></View>}
 

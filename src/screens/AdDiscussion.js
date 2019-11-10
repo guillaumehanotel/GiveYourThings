@@ -56,7 +56,7 @@ class AdDiscussion extends Component {
         <ScrollView contentInsetAdjustmentBehavior="automatic">
           <Image
             style={{width: Dimensions.get('window').width, height: 200}}
-            source={{uri: 'https://img0.leboncoin.fr/ad-image/12455473de9f952252e8cb02d3bd4debd09d7d42.jpg'}}
+            source={{uri: ad.image_url}}
           />
 
           {discussions.map(discussion => (

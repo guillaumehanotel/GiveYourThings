@@ -1,7 +1,7 @@
 import * as GoogleSignIn from 'expo-google-sign-in';
 import GLOBALS from '../../Globals';
 import NavigationService from '../../utils/NavigationService';
-import {postUser} from '../../utils/requests';
+import {fetchUserByUid, postUser} from '../../utils/requests';
 
 export const authActions = {
   LOGOUT: 'LOGOUT',
@@ -50,7 +50,7 @@ export function fetchGoogleUser() {
 export function fetchDatabaseUser(user) {
   return async (dispatch, getState) => {
     const userUid = user.uid;
-    let fetchResponse = await fetch(GLOBALS.API_HOST + 'api/users?uid=' + userUid);
+    let fetchResponse = await fetchUserByUid(userUid);
 
     if (fetchResponse.status === 404) {
 

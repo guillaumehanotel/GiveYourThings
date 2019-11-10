@@ -17,6 +17,7 @@ export function formatAdDate(ad) {
     case 'heures':
       return time + ' h';
     case 'jour':
+      return '1j';
     case 'jours':
       return time + 'j';
     default:

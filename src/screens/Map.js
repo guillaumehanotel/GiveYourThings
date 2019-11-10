@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import {Text, StyleSheet, View, TextInput, ActivityIndicator} from 'react-native';
+import {StyleSheet, View, ActivityIndicator} from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
-import {fetchAdById, fetchOnlineAds} from '../utils/requests';
+import {fetchOnlineAds} from '../utils/requests';
 
 
 export default class Map extends Component {
@@ -14,14 +14,15 @@ export default class Map extends Component {
   }
 
   async componentDidMount() {
-    const ads = await fetchOnlineAds();
+    let ads = await fetchOnlineAds();
+    ads = ads.filter(ad => {
+      if (ad.latitude !== null && ad.longitude !== null) {
+        return ad;
+      }
+    });
     this.setState({
       ads: ads,
     });
-  }
-
-  onRegionChange(region) {
-    this.setState({region});
   }
 
   render() {

@@ -21,6 +21,10 @@ class MyProfile extends Component {
     };
   }
 
+  navigateToMyAds = (userID) => {
+    this.props.navigation.navigate('AdsList', {adsOwnerId: userID});
+  };
+
   signOut = () => {
     this.props.logout();
     this.props.navigation.navigate('GoogleAuthentification');
@@ -40,23 +44,17 @@ class MyProfile extends Component {
     return (
       <SafeAreaView style={styles.full_screen}>
         <ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.scrollView}>
+
           <View style={styles.profil}>
             <Image source={{uri: user.photoUrl}} style={{width: 200, height: 200}}/>
           </View>
+
           <Text>{user.username}</Text>
 
-          {/*<View style={styles.donations_list}>*/}
-          {/*  <FlatList*/}
-          {/*    data={this.state.data}*/}
-          {/*    renderItem={({item}) => <Donations donation={item} navigateToProfilPage={this.navigateToProfilPage}/>}*/}
-          {/*    keyExtractor={donation => donation.id}*/}
-          {/*    numColumns={2}*/}
-          {/*    nestedScrollEnabled={true}*/}
-          {/*    scrollEnabled={true}*/}
-          {/*  />*/}
-          {/*</View>*/}
-
-          <Button onPress={this.signOut} title="Logout"/>
+          <View style={{alignContent: "center", justifyContent: "center"}}>
+            <Button onPress={this.navigateToMyAds(1)} title="Annonce(s) publiée(s)"/>
+            <Button onPress={this.signOut} title="Logout"/>
+          </View>
 
         </ScrollView>
 

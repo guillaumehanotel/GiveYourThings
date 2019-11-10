@@ -66,7 +66,7 @@ class DiscussedAds extends Component {
               <View style={styles.discussedAds}>
                 <Image
                   style={{width: 50, height: 50, borderRadius: 50, marginLeft: 15}}
-                  source={{uri: 'https://img0.leboncoin.fr/ad-image/12455473de9f952252e8cb02d3bd4debd09d7d42.jpg'}}
+                  source={{uri: ad.image_url}}
                 />
                 <Text style={styles.discussedAdsText}>{ad.title}</Text>
               </View>
@@ -81,7 +81,7 @@ class DiscussedAds extends Component {
               <View style={styles.discussedAds}>
                 <Image
                   style={{width: 50, height: 50, borderRadius: 50, marginLeft: 15}}
-                  source={{uri: 'https://img0.leboncoin.fr/ad-image/12455473de9f952252e8cb02d3bd4debd09d7d42.jpg'}}
+                  source={{uri: ad.image_url}}
                 />
                 <Text style={styles.discussedAdsText}>{ad.title}</Text>
               </View>
@@ -96,7 +96,7 @@ class DiscussedAds extends Component {
               <View style={styles.discussedAds}>
                 <Image
                   style={{width: 50, height: 50, borderRadius: 50, marginLeft: 15}}
-                  source={{uri: 'https://img0.leboncoin.fr/ad-image/12455473de9f952252e8cb02d3bd4debd09d7d42.jpg'}}
+                  source={{uri: ad.image_url}}
                 />
                 <Text style={styles.discussedAdsText}>{ad.title}</Text>
               </View>

@@ -64,3 +64,4 @@ buck-out/
 .gitattributes
 .prettierrc.js
 .watchmanconfig
+.env

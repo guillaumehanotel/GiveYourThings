@@ -1,24 +1,21 @@
 import React, {Component} from 'react';
 import {
-  StyleSheet,
-  View,
-  Text,
-  Button,
   ActivityIndicator,
-  SafeAreaView,
-  TextInput,
-  ScrollView,
+  Button,
   Image,
-  Picker,
   PermissionsAndroid,
+  Picker,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {postAd, fetchAllCategories} from '../utils/requests';
+import {fetchAddressByCoordinate, fetchAllCategories, postAd} from '../utils/requests';
 import Geolocation from 'react-native-geolocation-service';
-import ImagePicker from 'react-native-image-picker/src'
-
-
-const APIKEY = 'AIzaSyB4ZD3zbfTEfF7qMZ1mSfA8Dz67VuZZ5aU';
+import ImagePicker from 'react-native-image-picker/src';
 
 class CreateAd extends Component {
 
@@ -26,8 +23,6 @@ class CreateAd extends Component {
     super(props);
     this.state = {
       photo: null,
-      filePath: null,
-      fileUri: null,
       user: this.props.user,
       itemName: null,
       categories: [],
@@ -37,11 +32,10 @@ class CreateAd extends Component {
         type: 'Don',
         condition: null,
         localisation: null,
-        user_id: this.props.user.id,
         category_id: null,
+        latitude: null,
+        longitude: null,
       },
-      latitude: null,
-      longitude: null,
     };
   }
 
@@ -55,23 +49,26 @@ class CreateAd extends Component {
         };
       }),
     });
-    this.getCoordsPosition();
+    this.getCurrentPosition();
   }
 
-  getCoordsPosition = async () => {
+  askLocationPermission = async () => {
+    return await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        'title': 'GiveYourThings Location Permission',
+        'message': 'GiveYourThings App needs access to your location ',
+      },
+    );
+  };
+
+  getCurrentPosition = async () => {
     try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          'title': 'GiveYourThings Location Permission',
-          'message': 'GiveYourThings App needs access to your location ',
-        },
-      );
+      const granted = await this.askLocationPermission();
+
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
 
-        console.log('Location Permission Granted.');
-
-        const position = await Geolocation.getCurrentPosition(
+        Geolocation.getCurrentPosition(
           (position) => {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
@@ -79,11 +76,10 @@ class CreateAd extends Component {
           },
           (error) => {
             console.log(error.code, error.message);
-          },
-          {
+          }, {
             enableHighAccuracy: true,
             timeout: 15000,
-            maximumAge: 10000
+            maximumAge: 10000,
           },
         );
       } else {
@@ -92,47 +88,27 @@ class CreateAd extends Component {
     } catch (err) {
       console.warn(err);
     }
-
-    Geolocation.clearWatch(this.watchID);
-    this.watchID = Geolocation.watchPosition(
-      position => {
-        console.log('New position!');
-      },
-      error => console.log(error),
-      {
-        enableHighAccuracy: true,
-        timeout: 20000,
-        distanceFilter: 0,
-      },
-    );
   };
 
   getAddress = async (latitude, longitude) => {
-    let url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${APIKEY}`;
     try {
-      let response = await fetch(url);
-      let responseJson = await response.json();
+      const localisation = await fetchAddressByCoordinate(latitude, longitude);
       this.setState({
-        longitude: longitude,
-        latitude: latitude,
-        formAd : {
-          localisation: responseJson.results[0].formatted_address
+        formAd: {
+          localisation: localisation,
+          longitude: longitude,
+          latitude: latitude,
         }
       });
-    }
-    catch (error) {
+    } catch (error) {
       console.warn(error);
     }
   };
 
   createAd = async () => {
-    const response = await postAd(this.state.user.id, { ...this.state.formAd, type: 'Don'});
-    console.log(response.status);
+    const response = await postAd(this.state.user.id, this.state.photo, {...this.state.formAd, type: 'Don'});
     if (response.status === 201) {
       console.log('ad created');
-      const adId = response.headers.map.location.split('/').pop();
-      //this.sendPicture(adId)
-
     } else {
       if (response.status === 400) {
         const error = await response.json();
@@ -141,26 +117,8 @@ class CreateAd extends Component {
         console.log('fail to create ad');
       }
     }
-    // TODO popup
     this.props.navigation.navigate('AdsList');
   };
-
-  sendPicture(adId) {
-    const obj = {
-      uploadUrl: 'http://vps687959.ovh.net/api/ads/' + adId + '/image',
-      method: 'POST',
-      files: [{
-        filename: 'file',
-        filepath: filePath,
-        filetype: 'image/jpeg'
-      }]
-    };
-
-    FileUpload.upload(obj, (err, result) => {
-      console.log(result.data);
-      console.log(err);
-    });
-  }
 
   handleChoosePhoto = () => {
     const options = {
@@ -170,9 +128,9 @@ class CreateAd extends Component {
       if (response.uri) {
         this.setState({
           photo: response,
-        })
+        });
       }
-    })
+    });
   };
 
   handleChooseCameraPhoto = () => {
@@ -184,19 +142,15 @@ class CreateAd extends Component {
     };
     ImagePicker.launchCamera(options, (response) => {
       this.setState({
-        filePath: response,
-        photo: {uri: 'data:image/jpeg;base64,' + response.data},
-        fileUri: response.uri,
-      })
-    })
+        photo: response,
+      });
+    });
   };
 
-
   render() {
-    const { photo } = this.state;
+    const {photo} = this.state;
     const categories = this.state.categories;
     const localisation = this.state.formAd.localisation;
-
 
     if (categories.length === 0 || localisation === null) {
       return (
@@ -208,14 +162,15 @@ class CreateAd extends Component {
 
     return (
       <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
+        <ScrollView contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}>
+
           <TextInput
             value={this.state.formAd.title}
             onChangeText={value => this.setState({formAd: {...this.state.formAd, title: value}})}
             placeholder="Nom du produit"
           />
+
           <TextInput
             editable
             maxLength={40}
@@ -225,11 +180,13 @@ class CreateAd extends Component {
             onChangeText={value => this.setState({formAd: {...this.state.formAd, description: value}})}
             placeholder="Description"
           />
+
           <TextInput
             value={this.state.formAd.condition}
             onChangeText={value => this.setState({formAd: {...this.state.formAd, condition: value}})}
             placeholder="État"
           />
+
           <TextInput
             value={this.state.formAd.localisation}
             onChangeText={value => this.setState({formAd: {...this.state.formAd, localisation: value}})}
@@ -237,34 +194,32 @@ class CreateAd extends Component {
             placeholder="Localisation géographique"
           />
 
-        <Picker
-          selectedValue={this.state.categories}
-          onValueChange={(itemValue, itemIndex) =>
-            this.setState({
-              itemName: itemValue,
-              formAd: {...this.state.formAd, category_id: itemIndex},
-            })
-          }>
-          <Picker.Item label={this.state.itemName} value={this.state.itemIndex}/>
-          {this.state.categories.map(category => <Picker.Item key={category.id} label={category.name}
-                                                              value={category.name}/>)}
-        </Picker>
+          <Picker
+            selectedValue={this.state.categories}
+            onValueChange={(itemValue, itemIndex) =>
+              this.setState({
+                itemName: itemValue,
+                formAd: {...this.state.formAd, category_id: itemIndex},
+              })
+            }>
+            <Picker.Item label={this.state.itemName} value={this.state.itemIndex}/>
+            {this.state.categories.map(category => <Picker.Item key={category.id}
+                                                                label={category.name}
+                                                                value={category.name}/>)}
+          </Picker>
 
-        <View style={{alignItems: 'center', justifyContent: 'center'}}>
-          {
-            photo ? (<Image
-                  source={{ uri: photo.uri }}
-                  style={{ width: 200, height: 200 }}
-                />)
-              :
-              <Text>Merci de choisir une image</Text>
-          }
-        </View>
-        <View style={{padding: 10}}>
-          <Button title="Ouvrir la Galerie" onPress={this.handleChoosePhoto} />
-          <Button title="Prendre une photo" onPress={this.handleChooseCameraPhoto} />
-          <Button title={'Déposer l\'annonce'} onPress={this.createAd}/>
-        </View>
+          <View style={{alignItems: 'center', justifyContent: 'center'}}>
+            {photo ? (<Image source={{uri: photo.uri}}
+                             style={{width: 200, height: 200}}/>)
+              : <Text>Merci de choisir une image</Text>
+            }
+          </View>
+
+          <View style={{padding: 10}}>
+            <Button title="Ouvrir la Galerie" onPress={this.handleChoosePhoto}/>
+            <Button title="Prendre une photo" onPress={this.handleChooseCameraPhoto}/>
+            <Button title={'Déposer l\'annonce'} onPress={this.createAd}/>
+          </View>
         </ScrollView>
 
       </SafeAreaView>
@@ -295,7 +250,7 @@ const styles = StyleSheet.create({
     height: 150,
     borderColor: 'black',
     borderWidth: 1,
-    marginHorizontal: 3
+    marginHorizontal: 3,
   },
 });
 

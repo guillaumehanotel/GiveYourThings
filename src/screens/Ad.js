@@ -87,7 +87,7 @@ class Ad extends Component {
 
           <Image
             style={{width: Dimensions.get('window').width, height: 250}}
-            source={{uri: 'https://img0.leboncoin.fr/ad-image/12455473de9f952252e8cb02d3bd4debd09d7d42.jpg'}}
+            source={{uri: ad.image_url}}
           />
           <View style={{flex: 1, alignItems: 'center'}}>
             {isMyAd ?
